@@ -28,6 +28,12 @@ public class Attendance {
     @Column(name = "payment_status", nullable = false)
     private Payment paymentStatus;
 
+    public enum Payment {
+        PAID,
+        UNPAID,
+        PENDING
+    }
+
     // Getters and Setters
     public int getAttendanceId() {
         return attendanceId;

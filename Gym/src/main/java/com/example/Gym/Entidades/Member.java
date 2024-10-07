@@ -2,7 +2,6 @@ package com.example.Gym.Entidades;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "members")
@@ -43,8 +42,8 @@ public class Member {
     @Column(name = "address", length = 255)
     private String address;
 
-    @Column(name = "join_date")
-    private Date joinDate = new Date();
+    @Column(name = "join_date", nullable = false)
+    private LocalDate joinDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -57,27 +56,31 @@ public class Member {
     @Column(name = "has_trainer")
     private boolean hasTrainer;
 
-    // Enum for Membership Type
+    // Constructor por defecto
+    public Member() {
+        this.joinDate = LocalDate.now();  // Inicializa la fecha de ingreso con la fecha actual
+    }
+
     public enum MembershipType {
-        STANDARD,
-        PREMIUM
+        standard,
+        premium
     }
+    
 
-    // Enum for Member Status
     public enum MemberStatus {
-        ACTIVE,
-        SUSPENDED,
-        CANCELED
+        active,
+        suspended,
+        canceled
     }
 
-    // Enum for Payment Method
+    // Enum para Payment Method
     public enum PaymentMethod {
-        CREDIT_CARD,
-        CASH,
-        DEBIT_CARD
+        credit_card,
+        debit_card,
+        cash
     }
-
     // Getters y Setters
+
     public int getMemberId() {
         return memberId;
     }
@@ -166,11 +169,11 @@ public class Member {
         this.address = address;
     }
 
-    public Date getJoinDate() {
+    public LocalDate getJoinDate() {
         return joinDate;
     }
 
-    public void setJoinDate(Date joinDate) {
+    public void setJoinDate(LocalDate joinDate) {
         this.joinDate = joinDate;
     }
 

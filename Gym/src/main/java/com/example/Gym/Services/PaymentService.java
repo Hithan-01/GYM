@@ -56,7 +56,7 @@ public class PaymentService {
 
     // Get payments by member ID
     public List<Payment> getPaymentsByMemberId(int memberId) {
-        return paymentRepository.findByMemberId(memberId); // Assuming this method is defined in your PaymentRepository
+        return paymentRepository.findByMember_MemberId(memberId); // Assuming this method is defined in your PaymentRepository
     }
 
     // Get payments within a specific date range
