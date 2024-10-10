@@ -11,7 +11,9 @@ import java.util.List;
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     
     // Custom query to find payments by member ID
-    List<Payment> findByMemberId(int memberId);
+   
+        List<Payment> findByMember_MemberId(int memberId); // Corrected to match the member's ID
+    
 
     // Custom query to find payments within a date range
     List<Payment> findByPaymentDateBetween(LocalDate startDate, LocalDate endDate);

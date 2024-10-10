@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Members List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-4">Members List</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Membership Type</th>
+                <th>Membership Start</th>
+                <th>Membership End</th>
+                <th>Address</th>
+                <th>Join Date</th>
+                <th>Status</th>
+                <th>Payment Method</th>
+                <th>Trainer Assigned</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="member : ${members}">
+                <td th:text="${member.memberId}"></td>
+                <td th:text="${member.firstName}"></td>
+                <td th:text="${member.lastName}"></td>
+                <td th:text="${member.email}"></td>
+                <td th:text="${member.phoneNumber}"></td>
+                <td th:text="${member.membershipType}"></td>
+                <td th:text="${member.membershipStart}"></td>
+                <td th:text="${member.membershipEnd}"></td>
+                <td th:text="${member.address}"></td>
+                <td th:text="${#dates.format(member.joinDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${member.status}"></td>
+                <td th:text="${member.paymentMethod}"></td>
+                <td th:text="${member.hasTrainer ? 'Yes' : 'No'}"></td>
+                <td>
+                    <a th:href="@{/admin/members/edit/{id}(id=${member.memberId})}" class="btn btn-warning">Edit</a>
+                    <a th:href="@{/admin/members/delete/{id}(id=${member.memberId})}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

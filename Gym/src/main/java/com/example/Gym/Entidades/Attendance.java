@@ -2,11 +2,12 @@ package com.example.Gym.Entidades;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "attendance")
 public class Attendance {
+
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int attendanceId;
@@ -16,7 +17,7 @@ public class Attendance {
     private Member member;
 
     @Column(name = "attendance_date", nullable = false)
-    private LocalDateTime attendanceDate; // Usar LocalDateTime para almacenar la fecha y hora
+    private LocalDateTime attendanceDate; // Using LocalDateTime to store date and time
 
     @Column(name = "check_in_time")
     private LocalDateTime checkInTime;
@@ -26,7 +27,7 @@ public class Attendance {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
-    private Payment paymentStatus;
+    private PaymentStatus paymentStatus; // Change to PaymentStatus enum
 
     // Getters and Setters
     public int getAttendanceId() {
@@ -69,21 +70,11 @@ public class Attendance {
         this.checkOutTime = checkOutTime;
     }
 
-    public Payment getPaymentStatus() {
-        return paymentStatus;
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus; // Changed to PaymentStatus
     }
 
-    public void setPaymentStatus(Payment paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
-
-    public List<Attendance> getAllAttendanceRecords() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllAttendanceRecords'");
-    }
-
-    public Attendance saveAttendance(Attendance attendance) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveAttendance'");
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus; // Changed to PaymentStatus
     }
 }

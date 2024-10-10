@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-4">Admin Dashboard</h1>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Manage Payments</h2>
+        </div>
+        <div class="card-body">
+            <a th:href="@{/admin/payments}" class="btn btn-primary">View Payments</a>
+            <a th:href="@{/admin/payments/add}" class="btn btn-secondary">Add Payment</a>
+        </div>
+    </div>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Manage Attendance</h2>
+        </div>
+        <div class="card-body">
+            <a th:href="@{/admin/attendance}" class="btn btn-primary">View Attendance</a>
+            <a th:href="@{/admin/attendance/add}" class="btn btn-secondary">Add Attendance</a>
+        </div>
+    </div>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Manage Members</h2>
+        </div>
+        <div class="card-body">
+            <a th:href="@{/admin/members}" class="btn btn-primary">View Members</a>
+            <a th:href="@{/admin/members/add}" class="btn btn-secondary">Add Member</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,18 +1,22 @@
 package com.example.Gym.Services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.Gym.Entidades.Payment;
 import com.example.Gym.Repositories.PaymentRepository;
-import java.time.LocalDate;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @Transactional // Use this for transaction management
 public class PaymentService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PaymentService.class); // Logger initialization
 
     @Autowired
     private PaymentRepository paymentRepository;
@@ -30,6 +34,7 @@ public class PaymentService {
 
     // Save a new payment
     public Payment savePayment(Payment payment) {
+        logger.info("Saving payment: {}", payment); // Log the payment details
         return paymentRepository.save(payment);
     }
 
@@ -44,6 +49,7 @@ public class PaymentService {
         existingPayment.setPaymentMethod(paymentDetails.getPaymentMethod());
         existingPayment.setTransactionId(paymentDetails.getTransactionId());
 
+        logger.info("Updating payment: {}", existingPayment); // Log the update
         return paymentRepository.save(existingPayment);
     }
 
@@ -51,12 +57,14 @@ public class PaymentService {
     public void deletePayment(int id) {
         Payment existingPayment = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
+        
         paymentRepository.delete(existingPayment);
+        logger.info("Deleted payment with ID: {}", id); // Log the deletion
     }
 
     // Get payments by member ID
     public List<Payment> getPaymentsByMemberId(int memberId) {
-        return paymentRepository.findByMemberId(memberId); // Assuming this method is defined in your PaymentRepository
+        return paymentRepository.findByMember_MemberId(memberId); // Assuming this method is defined in your PaymentRepository
     }
 
     // Get payments within a specific date range

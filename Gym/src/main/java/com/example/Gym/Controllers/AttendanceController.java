@@ -1,36 +1,40 @@
-package com.example.Gym.Controllers; // Ensure the package declaration is correct
+package com.example.Gym.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.Gym.Entidades.Attendance;
-import com.example.Gym.Repositories.AttendanceRepository;
 import com.example.Gym.Services.AttendanceService;
 
-import java.time.LocalDateTime;
 import java.util.List;
-@RestController
-@RequestMapping("/api/attendance")
+
+@Controller
+@RequestMapping("/admin/attendance")
 public class AttendanceController {
 
     @Autowired
     private AttendanceService attendanceService;
 
+    // View all attendance records
     @GetMapping
-    public List<Attendance> getAllAttendance() {
-        return attendanceService.getAllAttendanceRecords();
+    public String viewAttendance(Model model) {
+        List<Attendance> attendanceRecords = attendanceService.getAllAttendanceRecords();
+        model.addAttribute("attendanceRecords", attendanceRecords);
+        return "attendance"; // Returns the attendance view
     }
 
-    @PostMapping
-    public Attendance createAttendance(@RequestBody Attendance attendance) {
-        return attendanceService.saveAttendance(attendance);
+    // Add new attendance
+    @GetMapping("/add")
+    public String addAttendanceForm(Model model) {
+        model.addAttribute("attendance", new Attendance());
+        return "add-attendance"; // Returns the form to add new attendance
     }
 
-    // Additional endpoints can be added here
+    @PostMapping("/add")
+    public String addAttendance(@ModelAttribute Attendance attendance) {
+        attendanceService.saveAttendance(attendance);
+        return "redirect:/admin/attendance"; // Redirects to the attendance list
+    }
 }
