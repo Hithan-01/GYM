@@ -56,7 +56,7 @@ public class AttendanceService {
 
     // Get attendance records by member ID
     public List<Attendance> getAttendanceByMemberId(int memberId) {
-        return attendanceRepository.findByMemberId(memberId); // Assuming this method is defined in your AttendanceRepository
+        return attendanceRepository.findByMember_MemberId(memberId); // Assuming this method is defined in your AttendanceRepository
     }
 
     // Get attendance records for a specific date

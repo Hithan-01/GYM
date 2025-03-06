@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymFit - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #475569;
+            --accent-color: #8b5cf6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Main Content Area */
+        .main-container {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-message h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-message p {
+            color: var(--text-secondary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-bar {
+            position: relative;
+            margin-right: 1rem;
+        }
+
+        .search-bar input {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border-radius: var(--radius-md);
+            width: 250px;
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            width: 300px;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        /* Dashboard Cards Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card {
+            position: relative;
+            padding-left: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stat-card.members {
+            border-left-color: var(--primary-color);
+        }
+
+        .stat-card.classes {
+            border-left-color: var(--success-color);
+        }
+
+        .stat-card.trainers {
+            border-left-color: var(--warning-color);
+        }
+
+        .stat-card.revenue {
+            border-left-color: var(--accent-color);
+        }
+
+        .stat-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .members .stat-icon {
+            background-color: var(--primary-color);
+        }
+
+        .classes .stat-icon {
+            background-color: var(--success-color);
+        }
+
+        .trainers .stat-icon {
+            background-color: var(--warning-color);
+        }
+
+        .revenue .stat-icon {
+            background-color: var(--accent-color);
+        }
+
+        .stat-title {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        .trend-up {
+            color: var(--success-color);
+        }
+
+        .trend-down {
+            color: var(--danger-color);
+        }
+
+        .trend-neutral {
+            color: var(--text-light);
+        }
+
+        /* Chart Cards */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            height: 400px;
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-period {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .period-btn {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            background-color: var(--light-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .period-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .chart-container {
+            height: calc(100% - 3rem);
+            position: relative;
+        }
+
+        /* Quick Actions Section */
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .action-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .action-card:nth-child(1) .action-icon {
+            background-color: var(--primary-color);
+        }
+
+        .action-card:nth-child(2) .action-icon {
+            background-color: var(--success-color);
+        }
+
+        .action-card:nth-child(3) .action-icon {
+            background-color: var(--warning-color);
+        }
+
+        .action-card:nth-child(4) .action-icon {
+            background-color: var(--accent-color);
+        }
+
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Recent Activity & Upcoming Classes */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .recent-activity .card-header,
+        .upcoming-classes .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.checkin {
+            background-color: var(--success-color);
+        }
+
+        .activity-icon.signup {
+            background-color: var(--primary-color);
+        }
+
+        .activity-icon.payment {
+            background-color: var(--accent-color);
+        }
+
+        .activity-icon.class {
+            background-color: var(--warning-color);
+        }
+
+        .activity-content {
+            flex-grow: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .class-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .class-item:last-child {
+            border-bottom: none;
+        }
+
+        .class-time {
+            width: 4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light-bg);
+            border-radius: var(--radius-md);
+            padding: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .class-hour {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .class-ampm {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .class-details {
+            flex-grow: 1;
+        }
+
+        .class-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .class-instructor {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .class-instructor i {
+            color: var(--text-light);
+        }
+
+        .class-capacity {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .capacity-bar {
+            height: 0.5rem;
+            background-color: var(--border-color);
+            border-radius: 1rem;
+            margin-top: 0.25rem;
+            overflow: hidden;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            border-radius: 1rem;
+            background-color: var(--primary-color);
+        }
+
+        .view-all {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .chart-grid,
+            .activity-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-container {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin-left: 80px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Include the sidebar fragment -->
+    <div th:replace="SideBar :: sidebar"></div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="welcome-message">
+                <h1>Welcome back, <span th:text="${adminName}">Admin</span>!</h1>
+                <p>Here's what's happening at your gym today</p>
+            </div>
+            <div class="user-info">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-profile">
+                    <img src="/api/placeholder/48/48" alt="Admin" class="avatar">
+                    <span class="user-name" th:text="${adminName}">Admin</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="dashboard-grid">
+            <div class="card stat-card members">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-title">Total Members</div>
+                <div class="stat-value" th:text="${totalMembers}">625</div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span th:text="${memberGrowth}">8.5%</span> from last month
+                </div>
+            </div>
+
+            <div class="card stat-card classes">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-title">Classes Today</div>
+                <div class="stat-value" th:text="${todayClasses}">12</div>
+                <div class="stat-trend trend-neutral">
+                    <i class="fas fa-equals"></i>
+                    Same as last week
+                </div>
+            </div>
+
+            <div class="card stat-card trainers">
+                <div class="stat-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="stat-title">Active Trainers</div>
+                <div class="stat-value" th:text="${activeTrainers}">8</div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>1</span> new this month
+                </div>
+            </div>
+
+            <div class="card stat-card revenue">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-title">Monthly Revenue</div>
+                <div class="stat-value" th:text="${monthlyRevenue}">$24,500</div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span th:text="${revenueGrowth}">12.3%</span> from last month
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-grid">
+            <div class="card chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Membership Growth</h3>
+                    <div class="chart-period">
+                        <button class="period-btn">Week</button>
+                        <button class="period-btn active">Month</button>
+                        <button class="period-btn">Year</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="membershipChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Class Attendance</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions-grid">
+            <a href="admin/members/add" class="card action-card">
+                <div class="action-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h3 class="action-title">Add Member</h3>
+                <p class="action-desc">Register a new gym member</p>
+            </a>
+
+            <a href="/classes/create" class="card action-card">
+                <div class="action-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h3 class="action-title">Create Class</h3>
+                <p class="action-desc">Schedule a new fitness class</p>
+            </a>
+
+            <a href="/trainers/assign" class="card action-card">
+                <div class="action-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <h3 class="action-title">Assign Trainer</h3>
+                <p class="action-desc">Match members with trainers</p>
+            </a>
+
+            <a href="/reports/generate" class="card action-card">
+                <div class="action-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3 class="action-title">Generate Report</h3>
+                <p class="action-desc">Create financial or member reports</p>
+            </a>
+        </div>
+
+        <!-- Activity and Classes -->
+        <div class="activity-grid">
+            <!-- Recent Activity -->
+            <div class="card recent-activity">
+                <div class="card-header">
+                    <h3 class="chart-title">Recent Activity</h3>
+                    <a href="/activity" class="view-all">View all <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <ul class="activity-list">
+                    <li class="activity-item" th:each="activity : ${recentActivities}">
+                        <div th:class="${'activity-icon ' + activity.type}">
+                            <i th:class="${activity.type == 'checkin' ? 'fas fa-check' : 
+                                          activity.type == 'signup' ? 'fas fa-user-plus' :
+                                          activity.type == 'payment' ? 'fas fa-dollar-sign' : 'fas fa-calendar'}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title" th:text="${activity.description}">Sarah Johnson checked in</div>
+                            <div class="activity-meta">
+                                <span th:text="${activity.timestamp}">Today, 9:45 AM</span>
+                                <span th:if="${activity.memberName}" th:text="${activity.memberName}">Sarah Johnson</span>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Fallback examples if no data -->
+                    <li class="activity-item" th:if="${recentActivities == null || recentActivities.empty}">
+                        <div class="activity-icon checkin">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Sarah Johnson checked in</div>
+                            <div class="activity-meta">
+                                <span>Today, 9:45 AM</span>
+                                <span>Sarah Johnson</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="activity-item" th:if="${recentActivities == null || recentActivities.empty}">
+                        <div class="activity-icon signup">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">New member signed up</div>
+                            <div class="activity-meta">
+                                <span>Today, 10:30 AM</span>
+                                <span>Michael Brown</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="activity-item" th:if="${recentActivities == null || recentActivities.empty}">
+                        <div class="activity-icon payment">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Payment received</div>
+                            <div class="activity-meta">
+                                <span>Today, 11:15 AM</span>
+                                <span>David Wilson</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="activity-item" th:if="${recentActivities == null || recentActivities.empty}">
+                        <div class="activity-icon class">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">New class scheduled</div>
+                            <div class="activity-meta">
+                                <span>Today, 12:00 PM</span>
+                                <span>Yoga Basics</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Upcoming Classes -->
+            <div class="card upcoming-classes">
+                <div class="card-header">
+                    <h3 class="chart-title">Today's Classes</h3>
+                    <a href="/classes" class="view-all">View all <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="class-list">
+                    <div class="class-item" th:each="class : ${todayClassesList}">
+                        <div class="class-time">
+                            <div class="class-hour" th:text="${class.timeHour}">10:00</div>
+                            <div class="class-ampm" th:text="${class.timeAmPm}">AM</div>
+                        </div>
+                        <div class="class-details">
+                            <div class="class-title" th:text="${class.name}">HIIT Workout</div>
+                            <div class="class-instructor">
+                                <i class="fas fa-user"></i>
+                                <span th:text="${class.instructor}">Alex Johnson</span>
+                            </div>
+                            <div class="class-capacity">
+                                <span th:text="${class.enrolled}">18</span>/<span th:text="${class.capacity}">24</span> enrolled
+                                <div class="capacity-bar">
+                                    <div class="capacity-fill" th:style="'width: ' + ${class.enrolled * 100 / class.capacity} + '%'"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fallback examples if no data -->
+                    <div class="class-item" th:if="${todayClassesList == null || todayClassesList.empty}">
+                        <div class="class-time">
+                            <div class="class-hour">10:00</div>
+                            <div class="class-ampm">AM</div>
+                        </div>
+                        <div class="class-details">
+                            <div class="class-title">HIIT Workout</div>
+                            <div class="class-instructor">
+                                <i class="fas fa-user"></i>
+                                <span>Alex Johnson</span>
+                            </div>
+                            <div class="class-capacity">
+                                18/24 enrolled
+                                <div class="capacity-bar">
+                                    <div class="capacity-fill" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="class-item" th:if="${todayClassesList == null || todayClassesList.empty}">
+                        <div class="class-time">
+                            <div class="class-hour">12:30</div>
+                            <div class="class-ampm">PM</div>
+                        </div>
+                        <div class="class-details">
+                            <div class="class-title">Yoga Basics</div>
+                            <div class="class-instructor">
+                                <i class="fas fa-user"></i>
+                                <span>Emma Wilson</span>
+                            </div>
+                            <div class="class-capacity">
+                                15/20 enrolled
+                                <div class="capacity-bar">
+                                    <div class="capacity-fill" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="class-item" th:if="${todayClassesList == null || todayClassesList.empty}">
+                        <div class="class-time">
+                            <div class="class-hour">5:30</div>
+                            <div class="class-ampm">PM</div>
+                        </div>
+                        <div class="class-details">
+                            <div class="class-title">Spin Class</div>
+                            <div class="class-instructor">
+                                <i class="fas fa-user"></i>
+                                <span>Mike Thomas</span>
+                            </div>
+                            <div class="class-capacity">
+                                12/15 enrolled
+                                <div class="capacity-bar">
+                                    <div class="capacity-fill" style="width: 80%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script> 
+
+
+    // Chart.js Script
+document.addEventListener('DOMContentLoaded', function() {
+    // Membership Growth Chart
+    const membershipCtx = document.getElementById('membershipChart').getContext('2d');
+    const membershipChart = new Chart(membershipCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'New Members',
+                data: [45, 52, 48, 58, 63, 70, 75, 82, 90, 95, 98, 110],
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: '#3b82f6',
+                borderWidth: 2,
+                tension: 0.3,
+                pointBackgroundColor: '#3b82f6',
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [2, 4],
+                        color: '#e2e8f0'
+                    }
+                }
+            }
+        }
+    });
+
+    // Class Attendance Chart
+    const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+    const attendanceChart = new Chart(attendanceCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Yoga', 'HIIT', 'Spin', 'Pilates', 'Zumba'],
+            datasets: [{
+                data: [25, 20, 18, 15, 12],
+                backgroundColor: [
+                    '#3b82f6', // Primary
+                    '#10b981', // Success
+                    '#f59e0b', // Warning
+                    '#8b5cf6', // Accent
+                    '#6b7280'  // Gray
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        boxWidth: 12
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+
+    // Period button listeners
+    const periodBtns = document.querySelectorAll('.period-btn');
+    periodBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            periodBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            // Here you would fetch data for the selected period and update the chart
+        });
+    });
+});
+</script>

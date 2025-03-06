@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Department - GymFit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css"> <!-- Shared styles -->
+</head>
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-light: #3b82f6;
+        --primary-dark: #1d4ed8;
+        --secondary-color: #475569;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --border-color: #e2e8f0;
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --radius-md: 0.5rem;
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--light-bg);
+        color: var(--text-primary);
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        color: var(--secondary-color);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .back-btn:hover {
+        color: var(--primary-color);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background-color: var(--light-bg);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+
+    .card-footer {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+    }
+
+    .btn-secondary {
+        background-color: var(--light-bg);
+        color: var(--secondary-color);
+        border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--border-color);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+</style>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Add New Department</h2>
+                <a href="/admin/departments" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Departments
+                </a>
+            </div>
+            
+            <!-- Success Message -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${successMessage}">Department added successfully!</span>
+            </div>
+            
+            <!-- Error Message -->
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${errorMessage}">Error adding department!</span>
+            </div>
+
+            <div class="card-body">
+                <form id="addDepartmentForm">
+                    <!-- Department Name -->
+                    <div class="form-group">
+                        <label for="departmentName" class="form-label required">Department Name</label>
+                        <input type="text" id="departmentName" name="name" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href = '/admin/departments'">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveDepartment()">Save Department</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Save Department
+        function saveDepartment() {
+            const departmentName = document.getElementById('departmentName').value;
+
+            if (!departmentName.trim()) {
+                alert("Department name is required.");
+                return;
+            }
+
+            const formData = {
+                name: departmentName
+            };
+
+            fetch('/api/departments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create department');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Redirect to department list with success message
+                window.location.href = '/admin/departments?success=Department created successfully';
+            })
+            .catch(error => {
+                console.error('Error creating department:', error);
+                alert('Failed to create department. Please check the form and try again.');
+            });
+        }
+    </script>
+
+</body>
+</html>

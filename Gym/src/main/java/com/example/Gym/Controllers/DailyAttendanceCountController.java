@@ -3,6 +3,7 @@ package com.example.Gym.Controllers;
 import com.example.Gym.Entidades.DailyAttendanceCount;
 import com.example.Gym.Services.DailyAttendanceCountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/daily-attendance")
+@PreAuthorize("isAuthenticated()")
 public class DailyAttendanceCountController {
 
     @Autowired

@@ -2,7 +2,7 @@ package com.example.Gym.Entidades;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
+import com.example.Gym.Dto.MemberDto;
 
 @Entity
 @Table(name = "members")
@@ -30,12 +30,8 @@ public class Member {
     @Column(name = "membership_start", nullable = false)
     private LocalDate membershipStart;
 
-    @Column(name = "membership_end", nullable = false)
-    private LocalDate membershipEnd;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "membership_type", nullable = false)
-    private MembershipType membershipType;
+    @Column(name = "membership_end")
+   private LocalDate membershipEnd; // This can be null
 
     @Column(name = "barcode", nullable = false, unique = true, length = 50)
     private String barcode;
@@ -43,41 +39,25 @@ public class Member {
     @Column(name = "address", length = 255)
     private String address;
 
-    @Column(name = "join_date")
-    private Date joinDate = new Date();
+    @Column(name = "join_date", nullable = false)
+    private LocalDate joinDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private MemberStatus status;
+    private MemberDto.MemberStatus status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")
-    private PaymentMethod paymentMethod;
+    private MemberDto.PaymentMethod paymentMethod;
 
     @Column(name = "has_trainer")
     private boolean hasTrainer;
 
-    // Enum for Membership Type
-    public enum MembershipType {
-        STANDARD,
-        PREMIUM
-    }
+    @ManyToOne
+    @JoinColumn(name = "trainer_id", referencedColumnName = "trainerId")
+    private Trainer trainer;
 
-    // Enum for Member Status
-    public enum MemberStatus {
-        ACTIVE,
-        SUSPENDED,
-        CANCELED
-    }
-
-    // Enum for Payment Method
-    public enum PaymentMethod {
-        CREDIT_CARD,
-        CASH,
-        DEBIT_CARD
-    }
-
-    // Getters y Setters
+    // Getters and Setters
     public int getMemberId() {
         return memberId;
     }
@@ -142,14 +122,6 @@ public class Member {
         this.membershipEnd = membershipEnd;
     }
 
-    public MembershipType getMembershipType() {
-        return membershipType;
-    }
-
-    public void setMembershipType(MembershipType membershipType) {
-        this.membershipType = membershipType;
-    }
-
     public String getBarcode() {
         return barcode;
     }
@@ -166,27 +138,27 @@ public class Member {
         this.address = address;
     }
 
-    public Date getJoinDate() {
+    public LocalDate getJoinDate() {
         return joinDate;
     }
 
-    public void setJoinDate(Date joinDate) {
+    public void setJoinDate(LocalDate joinDate) {
         this.joinDate = joinDate;
     }
 
-    public MemberStatus getStatus() {
+    public MemberDto.MemberStatus getStatus() {
         return status;
     }
 
-    public void setStatus(MemberStatus status) {
+    public void setStatus(MemberDto.MemberStatus status) {
         this.status = status;
     }
 
-    public PaymentMethod getPaymentMethod() {
+    public MemberDto.PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
+    public void setPaymentMethod(MemberDto.PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
@@ -197,4 +169,12 @@ public class Member {
     public void setHasTrainer(boolean hasTrainer) {
         this.hasTrainer = hasTrainer;
     }
+
+    public Trainer getTrainer() {
+        return trainer;
+    }
+    public void setTrainer(Trainer trainer) {
+        this.trainer = trainer;
+    }
+    
 }

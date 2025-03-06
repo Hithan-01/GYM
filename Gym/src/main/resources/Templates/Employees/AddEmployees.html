@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Employee - GymFit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css"> <!-- Shared styles -->
+</head>
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-light: #3b82f6;
+        --primary-dark: #1d4ed8;
+        --secondary-color: #475569;
+        --accent-color: #8b5cf6;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-light: #94a3b8;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --transition: all 0.3s ease;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--light-bg);
+        color: var(--text-primary);
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .back-btn:hover {
+        color: var(--primary-color);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Horizontal Form Styling */
+    .form-horizontal {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+
+    .form-section {
+        grid-column: span 3;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+
+    .form-section h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background-color: var(--light-bg);
+        transition: var(--transition);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+
+    .form-help {
+        font-size: 0.875rem;
+        color: var(--text-light);
+        margin-top: 0.25rem;
+    }
+
+    .form-error {
+        font-size: 0.875rem;
+        color: var(--danger-color);
+        margin-top: 0.25rem;
+    }
+
+    .required::after {
+        content: '*';
+        color: var(--danger-color);
+        margin-left: 0.25rem;
+    }
+
+    .card-footer {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+    }
+
+    .btn-secondary {
+        background-color: var(--light-bg);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--border-color);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border: 1px solid var(--success-color);
+        color: var(--success-color);
+    }
+
+    .alert-danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid var(--danger-color);
+        color: var(--danger-color);
+    }
+
+    /* Responsive grid */
+    @media (max-width: 992px) {
+        .form-horizontal {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .form-section {
+            grid-column: span 2;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .form-horizontal {
+            grid-template-columns: 1fr;
+        }
+        .form-section {
+            grid-column: span 1;
+        }
+    }
+
+    /* Error styling */
+    .is-invalid {
+        border-color: var(--danger-color);
+    }
+
+    .is-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+    }
+</style>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Add New Employee</h2>
+                <a href="/admin/employees" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Employees
+                </a>
+            </div>
+            
+            <!-- Success Message -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${successMessage}">Employee added successfully!</span>
+            </div>
+            
+            <!-- Error Message -->
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${errorMessage}">Error adding employee!</span>
+            </div>
+
+            <div class="card-body">
+                <form id="addEmployeeForm">
+                    <!-- Employee Information -->
+                    <div class="form-section">
+                        <h3>Employee Information</h3>
+                    </div>
+
+                    <div class="form-horizontal">
+                        <!-- First Name -->
+                        <div class="form-group">
+                            <label for="firstName" class="form-label required">First Name</label>
+                            <input type="text" id="firstName" name="firstName" class="form-control" required>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="form-group">
+                            <label for="lastName" class="form-label required">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" class="form-control" required>
+                        </div>
+
+                        <!-- Job Title -->
+                        <div class="form-group">
+                            <label for="jobTitle" class="form-label required">Job Title</label>
+                            <input type="text" id="jobTitle" name="jobTitle" class="form-control" required>
+                        </div>
+
+                        <!-- Salary -->
+                        <div class="form-group">
+                            <label for="salary" class="form-label required">Salary</label>
+                            <input type="number" id="salary" name="salary" class="form-control" required>
+                        </div>
+
+                        <!-- Department -->
+                   
+                                <div class="form-group">
+                                    <label for="departmentId" class="form-label required">Department</label>
+                                    <select id="departmentId" name="departmentId" class="form-control" required>
+                                        <option value="">-- Select a Department --</option>
+                                        <option th:each="dept : ${departments}" 
+                                                th:value="${dept.id}" 
+                                                th:text="${dept.name}">
+                                        </option>
+                                    </select>
+                                </div>
+
+
+                        <!-- Employment Type -->
+                        <div class="form-group">
+                            <label for="employmentType" class="form-label required">Employment Type</label>
+                            <select id="employmentType" name="employmentType" class="form-control" required>
+                                <option value="FULL_TIME">Full Time</option>
+                                <option value="PART_TIME">Part Time</option>
+                                <option value="CONTRACT">Contract</option>
+                                <option value="INTERN">Intern</option>
+                            </select>
+                        </div>
+
+                        <!-- Is Trainer -->
+                        <div class="form-group">
+                            <label for="isTrainer" class="form-label">Is Trainer?</label>
+                            <select id="isTrainer" name="isTrainer" class="form-control">
+                                <option value="false" selected>No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+
+                        <!-- Hire Date -->
+                        <div class="form-group">
+                            <label for="hireDate" class="form-label required">Hire Date</label>
+                            <input type="date" id="hireDate" name="hireDate" class="form-control" required>
+                        </div>
+
+                        <!-- Termination Date -->
+                        <div class="form-group">
+                            <label for="terminationDate" class="form-label">Termination Date</label>
+                            <input type="date" id="terminationDate" name="terminationDate" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href = '/admin/employees'">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveEmployee()">Save Employee</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('hireDate').value = today;
+        });
+
+        // Save Employee
+
+    function saveEmployee() {
+    const departmentElement = document.getElementById('departmentId');
+    const departmentId = departmentElement ? parseInt(departmentElement.value) : null;
+
+    if (!departmentId || isNaN(departmentId)) {
+        alert("ERROR: Please select a valid department.");
+        return;
+    }
+
+    const formData = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        jobTitle: document.getElementById('jobTitle').value,
+        salary: document.getElementById('salary').value,
+        departmentId: departmentId,
+        employmentType: document.getElementById('employmentType').value,
+        isTrainer: document.getElementById('isTrainer').value === 'true',
+        hireDate: document.getElementById('hireDate').value,
+        terminationDate: document.getElementById('terminationDate').value || null
+    };
+
+    console.log("DEBUG: Form Data Before Sending:", formData);
+
+    fetch(`/api/employees/create`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        // ✅ Check if the response is JSON before parsing
+        const contentType = response.headers.get("content-type");
+        if (!response.ok) {
+            if (contentType && contentType.includes("application/json")) {
+                return response.json().then(err => { throw new Error(err.message || 'Failed to create employee'); });
+            } else {
+                return response.text().then(errText => { throw new Error(errText || 'Failed to create employee'); });
+            }
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("DEBUG: Employee created successfully:", data);
+        window.location.href = '/admin/employees?success=Employee created successfully';
+    })
+    .catch(error => {
+        console.error('Error creating employee:', error);
+        alert('Failed to create employee: ' + error.message);
+    });
+}
+
+
+
+    </script>
+
+</body>
+</html>

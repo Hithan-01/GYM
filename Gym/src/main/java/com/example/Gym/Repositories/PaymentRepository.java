@@ -2,8 +2,7 @@ package com.example.Gym.Repositories;
 
 import com.example.Gym.Entidades.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     
     // Custom query to find payments by member ID
-   
+
         List<Payment> findByMember_MemberId(int memberId); // Corrected to match the member's ID
     
 
